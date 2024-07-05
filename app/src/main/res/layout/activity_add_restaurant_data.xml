@@ -112,7 +112,7 @@
         android:textColor="@color/colorAccent"
         android:text="등록"
         android:textSize="20sp"
-        android:layout_marginBottom="1sp"
+        android:layout_margin="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cancel_button" />
 
@@ -126,7 +126,7 @@
         android:text="취소"
         android:textColor="@color/colorAccent"
         android:textSize="20sp"
-        android:layout_marginBottom="1sp"
+        android:layout_margin="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
