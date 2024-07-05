@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -24,20 +23,6 @@ import com.elvishew.xlog.XLog
 import com.crazyfoodfighter.restaurantreview.R
 import com.crazyfoodfighter.restaurantreview.databinding.ActivityRestaurantDetailModBinding
 import com.crazyfoodfighter.restaurantreview.main.dialog.*
-//import com.example.myapplication_test.main.dialog.DayDialog
-//import com.example.myapplication_test.main.dialog.DayDialogInterface
-//import com.example.myapplication_test.main.dialog.ModBottomNaviDialog
-//import com.example.myapplication_test.main.dialog.ModBottomNaviDialogInterface
-//import com.example.myapplication_test.main.dialog.ModCategoryDialog
-//import com.example.myapplication_test.main.dialog.ModCategoryDialogInterface
-//import com.example.myapplication_test.main.dialog.ModImageDialog
-//import com.example.myapplication_test.main.dialog.ModImageDialogInterface
-//import com.example.myapplication_test.main.dialog.ModMapsDialog
-//import com.example.myapplication_test.main.dialog.ModMapsDialogInterface
-//import com.example.myapplication_test.main.dialog.ModRePermissionDialog
-//import com.example.myapplication_test.main.dialog.ModRePermissionDialogInterface
-//import com.example.myapplication_test.main.dialog.ModTagDialog
-//import com.example.myapplication_test.main.dialog.ModTagDialogInterface
 import com.crazyfoodfighter.restaurantreview.main.firebase.FirebaseManager
 import com.crazyfoodfighter.restaurantreview.main.model.Restaurant
 import com.crazyfoodfighter.restaurantreview.main.settings.CustomToast
@@ -56,6 +41,7 @@ import java.util.Date
 class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, DayDialogInterface,
     ModCategoryDialogInterface, ModTagDialogInterface, ModImageDialogInterface,
     ModRePermissionDialogInterface, ModMapsDialogInterface, ModBottomNaviDialogInterface {
+
     private lateinit var binding: ActivityRestaurantDetailModBinding
     private var lat: Double = 0.0
     private var long: Double = 0.0
@@ -129,13 +115,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
             Picasso.get().load(it.imageURl).into(binding.detailRsImage)
         }
 
-        // 브레이트 타임의 값이 null 일경우 버튼의 색을 하얀색으로 줘서 눈에 안보이게함
-        if (binding.restaurantBreakTime.text == "") {
-            binding.restaurantBreakTime.setBackgroundColor(0)
-        }
-        if (binding.restaurantBreakTime2.text == "") {
-            binding.restaurantBreakTime2.setBackgroundColor(0)
-        }
         mapView = binding.restaurantMap1
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -166,17 +145,14 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
 
         //브레이크 타임 설정
         binding.restaurantBreakTime.setOnClickListener {
-            binding.restaurantBreakTime.setBackgroundColor(Color.parseColor("#6E3EB3"))
             getTime(binding.restaurantBreakTime, binding.restaurantBreakTime.context)
         }
         binding.restaurantBreakTime2.setOnClickListener {
-            binding.restaurantBreakTime2.setBackgroundColor(Color.parseColor("#6E3EB3"))
             getTime(binding.restaurantBreakTime2, binding.restaurantBreakTime2.context)
         }
         binding.detailRsImage.setOnClickListener {
             requestPermission()
         }
-
 
         /**
          * 완료 버튼 클릭 리스너 설정
@@ -204,7 +180,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
             }
         }
         setupBottomNavigation()
-
     } // onCreate() END
 
     private fun updateRestaurant(
@@ -213,18 +188,15 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         callback: (Restaurant) -> Unit
     ) {
         if (ModimageURl != Uri.parse("")) {
-
-            firebaseManager.uploadImageToFirebase(
+            firebaseManager.updateImageInFirebase(
                 this@RestaurantDetailActivityMod,
+                restaurant.imageURl,
                 ModimageURl,
                 binding.restaurantName.text.toString()
-
             ) { isSuccess, newUpdatedImageUrl ->
                 XLog.d("이미지 보자 - $newUpdatedImageUrl")
                 if (isSuccess) {
                     Toast.makeText(this, "업로드 성공", Toast.LENGTH_SHORT).show()
-
-//                    newUpdatedImageURLToDetailActivity = newUpdatedImageUrl.toString()
 
                     if (newUpdatedImageUrl != null) {
                         newUpdatedImageURLToDetailActivity = newUpdatedImageUrl.toString()
@@ -246,17 +218,12 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
                             bookmark = binding.restaurantBookmark.isChecked,
                             imageURl = newUpdatedImageUrl
                         )
-                        XLog.d("4")
-                        XLog.d("update 객체테스트 - updatedRestaurant.toString()") // OK
 
                         firebaseManager.updateRestaurant(id, updatedRestaurant)
-                        XLog.d("5")
                         callback(updatedRestaurant)
                     } else {
-
-                        CustomToast.createToast(this@RestaurantDetailActivityMod, "실패 했다 바카야로")
+                        CustomToast.createToast(this@RestaurantDetailActivityMod, "실패 했다")
                         XLog.d("실패함")
-
                     }
                 }
             }
@@ -286,7 +253,7 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        // Add a marker in Sydney and move the camera
+
         val daegu = LatLng(lat, long)
         mMap.setMaxZoomPreference(17f)
         mMap.setMinZoomPreference(16f)
@@ -298,14 +265,11 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         mMap.setOnCameraChangeListener { setMarker() }
         mMap.setOnMapClickListener {
             ModMapsDialogCome(lat, long)
-
         }
-
     }
 
     // 마커 관련
     private fun setMarker() {
-
         // 마커 설정하는 함수
         mMap.let {
             it.clear() // 지도에 있는 마커를 먼저 삭제
@@ -322,8 +286,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
                 markerOptions.position.latitude.toDouble(),
                 markerOptions.position.longitude.toDouble()
             )
-
-
         }
     }
 
@@ -337,7 +299,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         val dialog = DayDialog(this@RestaurantDetailActivityMod, 0)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "Day")
-
     }
 
     // 영업일 다이어로그에서 확인을 눌럿을경우
@@ -399,7 +360,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
             cal.set(Calendar.HOUR_OF_DAY, hour)
             cal.set(Calendar.MINUTE, minute)
 
-//            button.text = SimpleDateFormat("HH:mm").format(cal.time)
             button.text = when {
                 hour < 10 -> {
                     if (minute < 10) {
@@ -407,7 +367,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
                     } else {
                         "0${hour}:${minute}"
                     }
-
                 }
 
                 else -> {
@@ -429,14 +388,12 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         ).show()
     }
 
-    //  앨범 에서 사진 가져오기위한  사전작업 시작
+    // 앨범에서 사진 가져오기 위한 사전작업 시작
     @SuppressLint("IntentReset")
     fun bt1(view: View?) {    // 사진등록 버튼을 누르면 실행됨 이미지 고를 갤러리 오픈
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.setType("image/*")
         startActivityForResult(Intent.createChooser(intent, "load image"), PERMISSION_GALLERY)
-
-
     }
 
     @Deprecated("Deprecated in Java")
@@ -444,14 +401,12 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PERMISSION_GALLERY) {
-            var dataUri = data?.data
+            val dataUri = data?.data
             data2 = dataUri.toString()
             ModimageURl = Uri.parse(data2)
 
             try {
-
                 Glide.with(this).load(dataUri).override(100, 100).into(binding.detailRsImage)
-
             } catch (e: Exception) {
                 Toast.makeText(applicationContext, "${e.message} 실패하셨습니다.", Toast.LENGTH_SHORT)
                     .show()
@@ -485,7 +440,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
 
     @SuppressLint("Recycle")
     fun saveFile(fileName: String, mimeType: String, bitmap: Bitmap): Uri? {
-
         val CV = ContentValues()
 
         // MediaStore 에 파일명, mimeType 을 지정
@@ -496,7 +450,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         CV.put(MediaStore.Images.Media.IS_PENDING, 1)
 
         // MediaStore 에 파일을 저장
-        // requireContext().contentResolver 이게 뭘까??
         val uri = applicationContext.contentResolver.insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             CV
@@ -505,7 +458,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
 
         if (uri != null) {
             val descriptor = applicationContext.contentResolver.openFileDescriptor(uri, "w")
-
             val fos = FileOutputStream(descriptor?.fileDescriptor)
 
             bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 100, fos)
@@ -518,7 +470,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         }
         return uri
     }
-
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestPermission() {
@@ -541,7 +492,6 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
                 1000
             )
         }
-
     }
 
     override fun onClickImageYesButton(id: Int) {
@@ -582,7 +532,7 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
-    // 맵을 크개보여주는 다이얼로그 호출
+    // 맵을 크게 보여주는 다이얼로그 호출
     private fun ModMapsDialogCome(lat: Double, long: Double) {
         val dialog = ModMapsDialog(this@RestaurantDetailActivityMod, lat, long, 0)
         dialog.isCancelable = false

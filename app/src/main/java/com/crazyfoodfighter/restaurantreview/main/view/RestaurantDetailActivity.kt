@@ -18,6 +18,7 @@ import com.crazyfoodfighter.restaurantreview.main.dialog.DetailMapsDialog
 import com.crazyfoodfighter.restaurantreview.main.dialog.DetailMapsDialogInterface
 import com.crazyfoodfighter.restaurantreview.main.firebase.FirebaseManager
 import com.crazyfoodfighter.restaurantreview.main.model.Restaurant
+import com.elvishew.xlog.XLog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -63,7 +64,7 @@ class RestaurantDetailActivity : AppCompatActivity(), ConfirmDialogInterface, On
             restaurantId = it.id
             imageUrl = it.imageURl
             updateUI(it)
-            Log.d("테스트임", "$restaurantId , $imageUrl")
+            XLog.d("현재 ID : $restaurantId \nimageUrl : $imageUrl")
         }
 
         mapView = binding.DetailMap

@@ -57,7 +57,21 @@ class BookmarkActivity : AppCompatActivity() {
         // 하단 내비게이션바 관련
         setupBottomNavigation()
 
+        /**
+         * 뒤로 가기 버튼 클릭 리스너 설정
+         * MainActivity로 이동하고 현재 액티비티를 종료
+         */
+        binding.topAppBar.setNavigationOnClickListener {
+            navigateToMainActivity()
+        }
+
     } // onCreate() END
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 
     /**
      * 네비게이션바

@@ -72,9 +72,10 @@
                         android:id="@+id/main_search_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#eeefe3"
+                        android:background="@color/material_you_green"
                         android:hint="@string/main_search_view_string"
-                        app:layout_anchor="@id/main_search_bar" />
+                        app:layout_anchor="@id/main_search_bar"
+                        app:autoShowKeyboard="true" />
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
                 <!-- 서치바 END -->
 

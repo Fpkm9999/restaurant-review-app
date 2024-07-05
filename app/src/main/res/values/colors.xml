@@ -54,5 +54,6 @@
     <color name="checked_chip_color">#386663</color>
     <color name="checked_color_chip">#cdeda3</color>
     <color name="default_color_chip">#e2e4d1</color>
+    <color name="material_you_green">#00C853</color>
 
 </resources>

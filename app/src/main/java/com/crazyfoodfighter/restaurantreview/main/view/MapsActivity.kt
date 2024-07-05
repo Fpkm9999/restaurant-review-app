@@ -79,7 +79,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         .title(restaurant.store)
                 )
                 builder.include(LatLng(restaurant.latitude, restaurant.longitude))
-                Log.d("mapReady", restaurant.store)
 
                 if (marker != null) {
                     marker.tag = restaurant.id to restaurant.imageURl

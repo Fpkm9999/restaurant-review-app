@@ -537,4 +537,21 @@ class FirebaseManager(private val context: Context) {
                 }
             })
     }
+
+    fun updateImageInFirebase(
+        context: Context,
+        oldImageUrl: String,
+        newImageUri: Uri,
+        imageName: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
+        deleteImageByUrl(oldImageUrl) { success ->
+            if (success) {
+                uploadImageToFirebase(context, newImageUri, imageName, callback)
+            } else {
+                callback(false, null)
+            }
+        }
+    }
+
 }

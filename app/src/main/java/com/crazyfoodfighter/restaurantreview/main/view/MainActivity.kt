@@ -199,22 +199,16 @@ class MainActivity : AppCompatActivity(), RePermissionDialogInterface {
         val searchBar: SearchBar = binding.mainSearchBar
         val searchView: SearchView = binding.mainSearchView
 
-
         searchBar.setOnClickListener {
-            searchView.show() // SearchView 표시
+            searchView.show()
+            searchView.setBackgroundColor(ContextCompat.getColor(this, com.google.maps.android.R.color.abc_btn_colored_borderless_text_material))
+            searchView.editText.setTextColor(ContextCompat.getColor(this, R.color.text_02))
+            searchView.editText.setHintTextColor(ContextCompat.getColor(this, R.color.text_02))
         }
 
-        searchView.findViewById<View>(R.id.main_search_view)
-            .setOnClickListener { searchView.hide() }
-
-
         searchView.editText.setOnEditorActionListener { _, actionId, _ ->
-            Log.d("adb", "actionId: $actionId")
-
-
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val inputText = searchView.text.toString()
-
                 XLog.d("setupSearchBar() - 검색 : $inputText")
 
                 // 검색을 수행
@@ -241,7 +235,6 @@ class MainActivity : AppCompatActivity(), RePermissionDialogInterface {
             }
         }
     }
-
 
     /**
      * 검색 결과를 UI에 반영하는 메서드
