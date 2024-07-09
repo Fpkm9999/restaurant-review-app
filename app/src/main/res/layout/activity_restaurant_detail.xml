@@ -399,11 +399,14 @@
                             android:id="@+id/restaurantTagsGroup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="2dp"
+                            android:layout_marginTop="4dp"
                             android:layout_weight="1"
                             android:textColor="@color/colorAccent"
                             app:layout_constrainedWidth="true"
-                            app:singleLine="false" />
+                            app:singleLine="false"
+                            app:layout_constraintTop_toBottomOf="@id/textView4"
+                            app:layout_constraintStart_toEndOf="@id/guideline_left"
+                            app:layout_constraintEnd_toStartOf="@id/guideline_right"/>
 
                     </LinearLayout>
 

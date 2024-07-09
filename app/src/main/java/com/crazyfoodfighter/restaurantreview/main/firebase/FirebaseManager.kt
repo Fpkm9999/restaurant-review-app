@@ -8,11 +8,7 @@ import android.widget.Toast
 import androidx.core.graphics.scale
 import com.elvishew.xlog.XLog
 import com.crazyfoodfighter.restaurantreview.main.model.Restaurant
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -538,6 +534,14 @@ class FirebaseManager(private val context: Context) {
             })
     }
 
+    /**
+     * Firebase에  기존 imageUrl을 새로운 imageUrl로 업데이트
+     * @param imageName 업데이트 할 이미지(파일) 제목
+     * @param newImageUri 새로운 이미지 Url
+     * @param oldImageUrl 이전 이미지 Url
+     * @param  context
+     * @param callback
+     */
     fun updateImageInFirebase(
         context: Context,
         oldImageUrl: String,
@@ -548,7 +552,9 @@ class FirebaseManager(private val context: Context) {
         deleteImageByUrl(oldImageUrl) { success ->
             if (success) {
                 uploadImageToFirebase(context, newImageUri, imageName, callback)
+                XLog.d("기존 이미지 삭제 및 새로운 이미지 업데이트 성공 - $newImageUri")
             } else {
+                XLog.d("기존 이미지 삭제 및 새로운 이미지 업데이트 실패  ")
                 callback(false, null)
             }
         }

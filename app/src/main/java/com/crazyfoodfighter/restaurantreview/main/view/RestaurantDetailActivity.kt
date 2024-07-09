@@ -222,8 +222,14 @@ class RestaurantDetailActivity : AppCompatActivity(), ConfirmDialogInterface, On
          * 삭제 버튼 클릭 리스너 설정
          */
         binding.detailDeleteBtn.setOnClickListener {
-            restaurant?.let {
-                delete()
+            restaurantId.toIntOrNull()?.let { id ->
+                if (id in 0..24) {
+                    Toast.makeText(this, "기본 제공 데이터이므로 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    restaurant?.let {
+                        delete()
+                    }
+                }
             }
         }
     }

@@ -30,6 +30,7 @@ import com.crazyfoodfighter.restaurantreview.main.dialog.ConfirmDialogTimeInterf
 import com.crazyfoodfighter.restaurantreview.main.helper.AddCategoryHelper
 import com.crazyfoodfighter.restaurantreview.main.helper.AddTagHelper
 import com.crazyfoodfighter.restaurantreview.main.helper.DayHelper
+import com.elvishew.xlog.XLog
 import java.io.FileOutputStream
 import java.util.Calendar
 import java.util.Date
@@ -53,6 +54,7 @@ class AddRestaurantDataFragment : Fragment(), ConfirmDialogTimeInterface,
     val PERMISSION_Album = 101 // 앨범 권한 처리
     var dataString: String = ""
     val CAMERA_CODE = 102
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -192,6 +194,7 @@ class AddRestaurantDataFragment : Fragment(), ConfirmDialogTimeInterface,
         if (requestCode == CAMERA_CODE) {
             if (data?.extras?.get("data") != null) {
                 val img = data.extras?.get("data") as Bitmap
+                XLog.d("주는거 보자 : ${Date()}, $img")
                 val uri = saveFile(Date().toString(), "image/jpeg", img)
                 activity as AddRestaurantDataActivity
                 (activity as AddRestaurantDataActivity).receiveUrl(uri.toString())
@@ -249,9 +252,9 @@ class AddRestaurantDataFragment : Fragment(), ConfirmDialogTimeInterface,
         Log.i("uri", uri.toString())
 
         if (uri != null) {
-            val scriptor = requireContext().contentResolver.openFileDescriptor(uri, "w")
+            val descriptor = requireContext().contentResolver.openFileDescriptor(uri, "w")
 
-            val fos = FileOutputStream(scriptor?.fileDescriptor)
+            val fos = FileOutputStream(descriptor?.fileDescriptor)
 
             bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 100, fos)
             fos.close()

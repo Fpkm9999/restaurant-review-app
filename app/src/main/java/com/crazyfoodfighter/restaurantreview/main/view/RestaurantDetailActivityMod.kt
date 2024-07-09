@@ -130,10 +130,10 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
             dialog()
         }
         binding.restaurantCategory.setOnClickListener {
-            CategoryDialog()
+            showCategoryInDialog()
         }
         binding.restaurantTags.setOnClickListener {
-            TagDialog()
+            showTagInDialog()
         }
         // 영업시간 설정
         binding.restaurantBusinessHours.setOnClickListener {
@@ -264,7 +264,7 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         setMarker()
         mMap.setOnCameraChangeListener { setMarker() }
         mMap.setOnMapClickListener {
-            ModMapsDialogCome(lat, long)
+            showLargeGoogleMapInDialog(lat, long)
         }
     }
 
@@ -283,13 +283,13 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
             }
 
             recevieMarker(
-                markerOptions.position.latitude.toDouble(),
-                markerOptions.position.longitude.toDouble()
+                markerOptions.position.latitude,
+                markerOptions.position.longitude
             )
         }
     }
 
-    fun recevieMarker(latitude1: Double, longitude1: Double) {
+    private fun recevieMarker(latitude1: Double, longitude1: Double) {
         lat = latitude1
         long = longitude1
         Log.i("latlong!!", "${lat}, ${long}")
@@ -308,8 +308,11 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         }
     }
 
-    // 카테고리 다이어로그
-    private fun CategoryDialog() {
+    /**
+     * 다이얼로그를 사용하여 카테고리를 선택하는 함수
+     *
+     */
+    private fun showCategoryInDialog() {
         val dialog = ModCategoryDialog(this@RestaurantDetailActivityMod, 0)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "Category")
@@ -337,8 +340,10 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         this.tag = tag
     }
 
-    //태그 다이어로그 실행
-    private fun TagDialog() {
+    /**
+     * 다이얼로그를 사용하여 태그를 선택하는 함수
+     */
+    private fun showTagInDialog() {
         val dialog = ModTagDialog(this@RestaurantDetailActivityMod, 0)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "Tag")
@@ -415,7 +420,8 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         if (requestCode == CAMERA_CODE) {
             if (data?.extras?.get("data") != null) {
                 val img = data.extras?.get("data") as Bitmap
-                val uri = saveFile(Date().toString(), "image/jpg", img)
+                XLog.d("주는거 보자 : ${Date()}, $img")
+                val uri = saveFile(Date().toString(), "image/jpeg", img)
                 ModimageURl = Uri.parse(uri.toString())
                 binding.detailRsImage.setImageURI(uri)
             }
@@ -532,8 +538,12 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
-    // 맵을 크게 보여주는 다이얼로그 호출
-    private fun ModMapsDialogCome(lat: Double, long: Double) {
+    /**
+     * 다이얼로그를 사용하여 구글맵을 크게 보여주는 함수
+     * @param lat 위도
+     * @param long 경도
+     */
+    private fun showLargeGoogleMapInDialog(lat: Double, long: Double) {
         val dialog = ModMapsDialog(this@RestaurantDetailActivityMod, lat, long, 0)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "Maps")
@@ -542,7 +552,7 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
     override fun onClickMapYesButton(id: Int, latitude3: Double, longitude3: Double) {
         lat = latitude3
         long = longitude3
-        Log.d("latlong!!!!!", "${lat}, ${long}")
+        Log.d("latlong!!!!!", "${lat}, $long")
         setMarker()
 
         mapView.getMapAsync(this)
@@ -553,33 +563,34 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
      */
     private fun setupBottomNavigation() {
         bnv = binding.bnvMain
-
         bnv.menu.getItem(0).isChecked = true
 
         bnv.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.naviHome -> {
-                    ModBottomNaviDialogCome("메인페이지")
+                    showNavigationRestrictionUseDialog("메인페이지")
                     true
                 }
 
                 R.id.naviSearch -> {
-                    ModBottomNaviDialogCome("지도페이지")
+                    showNavigationRestrictionUseDialog("지도페이지")
                     true
                 }
 
                 R.id.naviFavorite -> {
-                    ModBottomNaviDialogCome("좋아요페이지")
+                    showNavigationRestrictionUseDialog("좋아요페이지")
                     true
                 }
 
                 R.id.naviAdd -> {
-                    ModBottomNaviDialogCome("등록페이지")
+                    showNavigationRestrictionUseDialog("등록페이지")
                     true
                 }
 
                 else -> {
                     false
+
+
                 }
             }
         }
@@ -610,7 +621,7 @@ class RestaurantDetailActivityMod : AppCompatActivity(), OnMapReadyCallback, Day
         }
     }
 
-    private fun ModBottomNaviDialogCome(title: String) {
+    private fun showNavigationRestrictionUseDialog(title: String) {
         val dialog = ModBottomNaviDialog(this@RestaurantDetailActivityMod, title, 0)
         dialog.isCancelable
         dialog.show(supportFragmentManager, "BottomNavi")
